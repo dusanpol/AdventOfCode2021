@@ -40,7 +40,33 @@ namespace AdventOfCode
 
         public override ValueTask<string> Solve_2()
         {
-            throw new NotImplementedException();
+            var commands = ParseSubCommands();
+
+            int distance = 0;
+            int depth = 0;
+            int aim = 0;
+
+            foreach (var command in commands)
+            {
+                switch (command.Type)
+                {
+                    case SubCmdType.Forward:
+                        distance += command.Value;
+                        depth += aim * command.Value;
+                        break;
+
+                    case SubCmdType.Up:
+                        aim -= command.Value;
+                        break;
+
+                    case SubCmdType.Down:
+                        aim += command.Value;
+                        break;
+                }
+            }
+
+            var solution = (distance * depth).ToString();
+            return ValueTask.FromResult(solution);
         }
 
         private SubCmd[] ParseSubCommands()
