@@ -11,10 +11,7 @@ public class Day_01 : BaseDay
 
     public override ValueTask<string> Solve_1()
     {
-        var depths = _input
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(line => int.Parse(line))
-            .ToArray();
+        int[] depths = ParseDepths();
 
         int increaseCount = 0;
 
@@ -33,4 +30,12 @@ public class Day_01 : BaseDay
     }
 
     public override ValueTask<string> Solve_2() => new($"Solution to {ClassPrefix} {CalculateIndex()}, part 2");
+
+    private int[] ParseDepths()
+    {
+        return _input
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => int.Parse(line))
+            .ToArray();
+    }
 }
