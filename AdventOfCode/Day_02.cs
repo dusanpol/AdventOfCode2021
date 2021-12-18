@@ -11,7 +11,31 @@ namespace AdventOfCode
 
         public override ValueTask<string> Solve_1()
         {
-            throw new NotImplementedException();
+            var commands = ParseSubCommands();
+
+            int distance = 0;
+            int depth = 0;
+
+            foreach (var command in commands)
+            {
+                switch (command.Type)
+                {
+                    case SubCmdType.Forward:
+                        distance += command.Value;
+                        break;
+
+                    case SubCmdType.Up:
+                        depth -= command.Value;
+                        break;
+
+                    case SubCmdType.Down:
+                        depth += command.Value;
+                        break;
+                }
+            }
+
+            var solution = (distance * depth).ToString();
+            return ValueTask.FromResult(solution);
         }
 
         public override ValueTask<string> Solve_2()
@@ -19,22 +43,35 @@ namespace AdventOfCode
             throw new NotImplementedException();
         }
 
-        private Tuple<SubCmd, int>[] ParseSubCommands()
+        private SubCmd[] ParseSubCommands()
         {
             return _input
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Split(' '))
                 .Select(lineParts =>
                 {
-                    var command = Enum.Parse<SubCmd>(lineParts[0], true);
+                    var commandType = Enum.Parse<SubCmdType>(lineParts[0], true);
                     int commandValue = int.Parse(lineParts[1]);
 
-                    return new Tuple<SubCmd, int>(command, commandValue);
+                    return new SubCmd(commandType, commandValue);
                 })
                 .ToArray();
         }
 
-        private enum SubCmd
+        private struct SubCmd
+        {
+            public SubCmdType Type { get; }
+
+            public int Value { get; set; }
+
+            public SubCmd(SubCmdType type, int value)
+            {
+                Type = type;
+                Value = value;
+            }
+        }
+
+        private enum SubCmdType
         {
             Forward,
             Down,
