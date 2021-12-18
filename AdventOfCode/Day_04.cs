@@ -25,7 +25,22 @@ public class Day_04 : BaseDay
 
     public override ValueTask<string> Solve_1()
     {
-        throw new NotImplementedException();
+        foreach (var drawnNumber in _numbers)
+        {
+            foreach (var board in _boards)
+                board.Mark(drawnNumber);
+            
+            var winingBoard = _boards.FirstOrDefault(board => board.IsWinning);
+
+            if (winingBoard != null)
+            {   
+                var score = winingBoard.CalculateScore(drawnNumber);
+                var solution = score.ToString();
+                return ValueTask.FromResult(solution);
+            }
+        }
+
+        throw new InvalidDataException("There is no winner!");
     }
 
     public override ValueTask<string> Solve_2()
@@ -36,6 +51,21 @@ public class Day_04 : BaseDay
     private class Board
     {
         public Number[][] Numbers { get; }
+
+        public bool IsWinning
+        {
+            get
+            {
+                bool anyRowWinning = Numbers.Any(row => row.All(num => num.Marked));
+                bool anyColumnWinning = Enumerable
+                    .Range(0, 5)
+                    .Any(row => Enumerable
+                        .Range(0, 5)
+                        .All(col => Numbers[col][row].Marked));
+
+                return anyRowWinning || anyColumnWinning;
+            }
+        }
 
         public Board(string[] inputLines)
         {
@@ -48,16 +78,26 @@ public class Day_04 : BaseDay
         public void Mark(int number)
         {
             var targetNumbers = Numbers
-                .SelectMany(x => x)
-                .Where(n => n.Value == number && !n.Marked)
+                .SelectMany(num => num)
+                .Where(num => num.Value == number)
                 .ToArray();
 
             foreach (var targetNumber in targetNumbers)
-                targetNumber.Mark();
+                targetNumber.Marked = true;
+        }
+
+        public int CalculateScore(int drawnNumber)
+        {
+            int unmarkedSum = Numbers
+                .SelectMany(num => num)
+                .Where(num => !num.Marked)
+                .Sum(num => num.Value);
+
+            return unmarkedSum * drawnNumber;
         }
     }
 
-    private struct Number
+    private class Number
     {
         public int Value { get; }
 
@@ -67,8 +107,6 @@ public class Day_04 : BaseDay
         {
             Value = value;
         }
-
-        public void Mark() => Marked = true;
 
         public override string ToString() => Marked ? $"{Value} Marked" : Value.ToString();
     }
