@@ -60,6 +60,64 @@ public class Day_03 : BaseDay
 
     public override ValueTask<string> Solve_2()
     {
-        throw new NotImplementedException();
+        int oxygenRating = 0;
+        string[] oxygenNumbers = _inputLines;
+
+        // iterate digits from most significant to least significant (in binary form!)
+        for (int d = 0; d < _digitCount; d++)
+        {
+            int oneBitCount = oxygenNumbers.Where(l => l[d] == '1').Count();
+            int zeroBitCount = oxygenNumbers.Length - oneBitCount; // no need to iterate again
+            char oxygenBit;
+
+            if (oneBitCount == zeroBitCount)
+                oxygenBit = '1';
+            else
+                oxygenBit = oneBitCount > zeroBitCount ? '1' : '0';
+
+            oxygenNumbers = oxygenNumbers
+                .Where(n => n[d] == oxygenBit)
+                .ToArray();
+
+            if (oxygenNumbers.Length == 1)
+            {
+                oxygenRating = Convert.ToInt32(oxygenNumbers.First(), 2);
+                break;
+            }
+        }
+
+        int scrubberRating = 0;
+        string[] scrubberNumbers = _inputLines;
+
+        // iterate digits from most significant to least significant (in binary form!)
+        for (int d = 0; d < _digitCount; d++)
+        {
+            int oneBitCount = scrubberNumbers.Where(l => l[d] == '1').Count();
+            int zeroBitCount = scrubberNumbers.Length - oneBitCount; // no need to iterate again
+            char scrubberBit;
+
+            if (oneBitCount == zeroBitCount)
+            {
+                scrubberBit = '0';
+            }
+            else
+            {
+                scrubberBit = oneBitCount > zeroBitCount ? '0' : '1';
+            }
+
+            scrubberNumbers = scrubberNumbers
+                .Where(n => n[d] == scrubberBit)
+                .ToArray();
+            
+            if (scrubberNumbers.Length == 1)
+            {
+                scrubberRating = Convert.ToInt32(scrubberNumbers.First(), 2);
+                break;
+            }
+        }
+
+        int lifeSupportRating = oxygenRating * scrubberRating;
+        var solution = lifeSupportRating.ToString();
+        return ValueTask.FromResult(solution);
     }
 }
