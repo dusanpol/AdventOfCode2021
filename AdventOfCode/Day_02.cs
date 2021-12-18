@@ -18,5 +18,27 @@ namespace AdventOfCode
         {
             throw new NotImplementedException();
         }
+
+        private Tuple<SubCmd, int>[] ParseSubCommands()
+        {
+            return _input
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Split(' '))
+                .Select(lineParts =>
+                {
+                    var command = Enum.Parse<SubCmd>(lineParts[0], true);
+                    int commandValue = int.Parse(lineParts[1]);
+
+                    return new Tuple<SubCmd, int>(command, commandValue);
+                })
+                .ToArray();
+        }
+
+        private enum SubCmd
+        {
+            Forward,
+            Down,
+            Up
+        }
     }
 }
