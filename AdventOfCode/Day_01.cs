@@ -1,4 +1,4 @@
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day_01 : BaseDay
 {
@@ -29,7 +29,25 @@ public class Day_01 : BaseDay
         return ValueTask.FromResult(solution);
     }
 
-    public override ValueTask<string> Solve_2() => new($"Solution to {ClassPrefix} {CalculateIndex()}, part 2");
+    public override ValueTask<string> Solve_2()
+    {
+        int[] depths = ParseDepths();
+
+        int increaseCount = 0;
+
+        for (int i = 3; i < depths.Length; i++)
+        {
+            int currentWindow = depths.Skip(i - 2).Take(3).Sum();
+            int previousWindow = depths.Skip(i - 3).Take(3).Sum();
+
+            if (currentWindow > previousWindow)
+                increaseCount++;
+        }
+
+        string solution = increaseCount.ToString();
+
+        return ValueTask.FromResult(solution);
+    }
 
     private int[] ParseDepths()
     {
